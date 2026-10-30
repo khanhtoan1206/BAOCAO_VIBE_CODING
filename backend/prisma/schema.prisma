@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "sqlite"
+}
+model User {
+  id Int @id @default(autoincrement())
+  name String
+  email String @unique
+  phone String
+  password String
+  role String @default("USER")
+  createdAt DateTime @default(now())
+  reviews Review[]
+  cart CartItem[]
+  orders Order[]
+}
+model Category {
+  id Int @id @default(autoincrement())
+  name String @unique
+  products Product[]
+}
+model Product {
+  id Int @id @default(autoincrement())
+  slug String? @unique
+  brand String @default("")
+  gallery String @default("[]")
+  specifications String @default("{}")
+  warranty String @default("")
+  segment String @default("")
+  demo Boolean @default(false)
+  name String
+  description String
+  image String
+  price Int
+  originalPrice Int
+  stock Int
+  featured Boolean @default(false)
+  deleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  categoryId Int
+  category Category @relation(fields: [categoryId], references: [id])
+  reviews Review[]
+  cart CartItem[]
+  items OrderItem[]
+  @@index([categoryId, deleted])
+}
+model Review {
+  id Int @id @default(autoincrement())
+  userId Int
+  productId Int
+  rating Int
+  comment String
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+  @@unique([userId, productId])
+}
+model CartItem {
+  id Int @id @default(autoincrement())
+  userId Int
+  productId Int
+  quantity Int
+  user User @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+  @@unique([userId, productId])
+}
+model Order {
+  id Int @id @default(autoincrement())
+  userId Int
+  recipient String
+  phone String
+  address String
+  provinceCode String?
+  provinceName String?
+  wardCode String?
+  wardName String?
+  districtCode String?
+  districtName String?
+  addressLine String?
+  addressVersion String @default("legacy-free-text")
+  fullAddress String?
+  total Int
+  status String @default("PROCESSING")
+  payment String @default("SIMULATED_PAID")
+  paymentMethod String @default("WALLET_DEMO")
+  paymentStatus String @default("UNPAID")
+  refundStatus String @default("NONE")
+  cancelReason String?
+  cancelledAt DateTime?
+  cancelledBy Int?
+  deliveryNote String @default("")
+  subtotal Int @default(0)
+  shippingFee Int @default(0)
+  discount Int @default(0)
+  idempotencyKey String?
+  requestHash String?
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id])
+  items OrderItem[]
+  history OrderStatusHistory[]
+  @@unique([userId, idempotencyKey])
+}
+model OrderItem {
+  id Int @id @default(autoincrement())
+  orderId Int
+  productId Int
+  name String
+  price Int
+  quantity Int
+  order Order @relation(fields: [orderId], references: [id])
+  image String?
+  product Product @relation(fields: [productId], references: [id])
+}
+model OrderStatusHistory {
+  id Int @id @default(autoincrement())
+  orderId Int
+  status String
+  note String
+  actorId Int?
+  createdAt DateTime @default(now())
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  @@index([orderId, id])
+}

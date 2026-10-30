@@ -1,0 +1,7 @@
+import { Link } from 'react-router-dom';
+import { Star } from 'lucide-react';
+import { type Product, money } from '../types/shop';
+import { Purchase } from './Purchase';
+export function ProductCard({product:p}:{product:Product}){
+  return <article className="product-card"><Link className="product-image" to={`/products/${p.id}`}><img src={p.image} alt={p.name} loading="lazy" onError={e=>{e.currentTarget.onerror=null;e.currentTarget.src='/images/category-0.svg';}}/>{p.originalPrice>p.price&&<span className="sale-badge">−{Math.round((1-p.price/p.originalPrice)*100)}%</span>}{p.demo&&<span className="demo-badge">Mẫu demo</span>}</Link><div className="product-info"><span className="eyebrow">{p.brand||p.category.name}</span><Link to={`/products/${p.id}`}><h3>{p.name}</h3></Link><strong className="product-price">{money(p.price)}</strong>{p.originalPrice>p.price&&<del>{money(p.originalPrice)}</del>}<div className="product-meta"><span className={p.stock?'in-stock':'out-stock'}>{p.stock?'● Còn hàng':'Tạm hết hàng'}</span>{p.reviewCount>0&&<span><Star size={12}/>{p.rating.toFixed(1)} ({p.reviewCount})</span>}</div><Purchase id={p.id} stock={p.stock}/><Link className="detail-link" to={`/products/${p.id}`}>Xem chi tiết →</Link></div></article>;
+}

@@ -1,0 +1,13 @@
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { api } from '../services/api';
+import { type Product, money } from '../types/shop';
+import { Purchase, ReviewForm } from '../components/Purchase';
+export function ProductPage() {
+  const {id}=useParams(); const [product,setProduct]=useState<Product|null>(null); const [error,setError]=useState('');
+  const [revision,setRevision]=useState(0);
+  useEffect(()=>{const c=new AbortController();setProduct(null);setError('');api.get(`/products/${id}`,{signal:c.signal}).then(r=>setProduct(r.data.data)).catch(()=>{if(!c.signal.aborted)setError('Không tìm thấy sản phẩm hoặc không kết nối được máy chủ.');});return()=>c.abort();},[id,revision]);
+  if(error)return <div className="panel" role="alert">{error} <Link to="/">Về cửa hàng</Link></div>;
+  if(!product)return <div className="h-96 animate-pulse rounded-2xl bg-slate-200" aria-label="Đang tải sản phẩm"/>;
+  return <><Link to="/" className="text-sm text-blue-600">← Tất cả sản phẩm</Link><div className="mt-6 grid gap-8 md:grid-cols-2"><div className="panel flex items-center justify-center"><img src={product.image} alt={product.name} className="w-full max-w-md"/></div><div className="panel"><p className="text-sm text-blue-600">{product.category.name}</p><h1 className="my-4 text-3xl font-extrabold">{product.name}</h1><p className="text-sm text-slate-500">★ {product.rating.toFixed(1)} · {product.reviewCount} đánh giá</p><p className="mt-6 text-3xl font-extrabold text-blue-600">{money(product.price)}</p><p className="mt-2 text-slate-400 line-through">{money(product.originalPrice)}</p><p className="mt-5 font-semibold">{product.stock>0?`Còn ${product.stock} sản phẩm`:'Tạm hết hàng'}</p><div className="mt-6"><Purchase id={product.id} stock={product.stock}/></div><p className="mt-6 leading-8 text-slate-600">{product.description}</p></div></div><section className="panel mt-8"><h2 className="mb-5 text-xl font-bold">Đánh giá khách hàng</h2>{product.reviews?.length?product.reviews.map(r=><article key={r.id} className="border-t border-slate-100 py-4"><p className="font-semibold">{r.user.name} · <span className="text-amber-600">{r.rating}/5 ★</span></p><p className="mt-2 text-slate-600">{r.comment}</p></article>):<p className="text-slate-500">Chưa có đánh giá cho sản phẩm này.</p>}<ReviewForm id={product.id} onSaved={()=>setRevision(v=>v+1)}/></section></>;
+}

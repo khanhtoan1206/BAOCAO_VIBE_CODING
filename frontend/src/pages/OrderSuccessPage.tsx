@@ -1,0 +1,6 @@
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { CheckCircle2 } from 'lucide-react';
+import { api } from '../services/api';
+import { OrderCard, type Order } from './OrdersPage';
+export function OrderSuccessPage(){const {id}=useParams();const [order,setOrder]=useState<Order|null>(null),[error,setError]=useState('');useEffect(()=>{const c=new AbortController();api.get(`/orders/${id}`,{signal:c.signal}).then(r=>setOrder(r.data.data)).catch(()=>{if(!c.signal.aborted)setError('Không tải được đơn hàng hoặc bạn không có quyền truy cập.');});return()=>c.abort();},[id]);return <div className="mx-auto max-w-3xl">{error?<div className="panel" role="alert">{error}</div>:!order?<div className="panel animate-pulse">Đang xác nhận đơn hàng…</div>:<><div className="panel mb-6 text-center"><CheckCircle2 className="mx-auto text-emerald-600" size={52}/><h1 className="my-4 text-3xl font-extrabold">Đặt hàng thành công!</h1><p className="text-sm text-slate-500">Đơn hàng #{order.id} đã được ghi nhận. Không có giao dịch tiền thật trên website demo.</p></div><OrderCard order={order}/></>}<div className="mt-6 flex justify-center gap-4"><Link className="btn" to="/orders">Lịch sử đơn hàng</Link><Link className="btn-secondary" to="/">Tiếp tục mua sắm</Link></div></div>;}

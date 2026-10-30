@@ -1,0 +1,4 @@
+export interface Category { id: number; name: string }
+export interface Product { slug?:string; brand?:string; gallery?:string; specifications?:string; warranty?:string; segment?:string; demo?:boolean }
+export interface Product { id: number; name: string; description: string; image: string; price: number; originalPrice: number; stock: number; featured: boolean; categoryId: number; category: Category; rating: number; reviewCount: number; reviews?: { id: number; rating: number; comment: string; user: { name: string } }[] }
+export const money = (value: number) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);

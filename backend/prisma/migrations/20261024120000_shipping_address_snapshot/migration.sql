@@ -1,0 +1,10 @@
+ALTER TABLE "Order" ADD COLUMN "provinceCode" TEXT;
+ALTER TABLE "Order" ADD COLUMN "provinceName" TEXT;
+ALTER TABLE "Order" ADD COLUMN "wardCode" TEXT;
+ALTER TABLE "Order" ADD COLUMN "wardName" TEXT;
+ALTER TABLE "Order" ADD COLUMN "districtCode" TEXT;
+ALTER TABLE "Order" ADD COLUMN "districtName" TEXT;
+ALTER TABLE "Order" ADD COLUMN "addressLine" TEXT;
+ALTER TABLE "Order" ADD COLUMN "addressVersion" TEXT NOT NULL DEFAULT 'legacy-free-text';
+ALTER TABLE "Order" ADD COLUMN "fullAddress" TEXT;
+UPDATE "Order" SET "fullAddress" = "address";

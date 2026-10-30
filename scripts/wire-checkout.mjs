@@ -1,0 +1,5 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+const root=new URL('../frontend/src/',import.meta.url);
+function edit(path,fn){const url=new URL(path,root);writeFileSync(url,fn(readFileSync(url,'utf8')));}
+edit('App.tsx',s=>s.replace("import { CartPage }", "import { CheckoutPage } from './pages/CheckoutPage';\nimport { OrderDetailPage } from './pages/OrderDetailPage';\nimport { CartPage }").replace('<Route path="/cart"','<Route path="/checkout/*" element={<Protected><CheckoutPage key="checkout"/></Protected>}/><Route path="/orders/:id" element={<Protected><OrderDetailPage/></Protected>}/><Route path="/cart"'));
+edit('pages/CartPage.tsx',s=>s.replace("import { CheckoutForm } from '../components/CheckoutForm';\n",'').replace('<CheckoutForm busy={busy} setBusy={setBusy} onError={load}/>','<p className="mb-5 text-sm leading-7 text-slate-500">Tiếp tục để xác nhận địa chỉ, chọn phương thức thanh toán và xem lại đơn hàng.</p><Link className="btn w-full" to="/checkout/information">Tiến hành đặt hàng →</Link>'));

@@ -1,0 +1,28 @@
+{
+  "name": "@kt-shop/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "test": "node --test --test-concurrency=1",
+    "admin:create": "node scripts/create-admin.js",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "node prisma/premium-seed.js"
+  },
+  "dependencies": {
+    "@google/genai": "^2.31.0",
+    "@prisma/adapter-better-sqlite3": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "bcrypt": "6.0.0",
+    "better-sqlite3": "13.0.3",
+    "dotenv": "18.0.9",
+    "express": "5.3.0",
+    "jsonwebtoken": "9.0.3"
+  },
+  "devDependencies": {
+    "prisma": "7.10.1"
+  }
+}

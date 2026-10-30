@@ -1,0 +1,2 @@
+import axios from 'axios';
+export function errorMessage(error:unknown){return axios.isAxiosError(error)?error.response?.data?.error?.message||'Không kết nối được máy chủ. Vui lòng thử lại.':'Có lỗi xảy ra. Vui lòng thử lại.';}

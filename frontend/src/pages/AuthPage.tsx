@@ -1,0 +1,11 @@
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { api } from '../services/api';
+import { useShop } from '../contexts/ShopContext';
+import { errorMessage } from '../utils/error';
+export function AuthPage({register=false}:{register?:boolean}) {
+  const shop=useShop(),navigate=useNavigate();const [busy,setBusy]=useState(false),[error,setError]=useState('');
+  return <div className="panel mx-auto max-w-md"><p className="text-sm font-bold text-blue-600">CHÀO MỪNG ĐẾN KT-SHOP</p><h1 className="my-5 text-3xl font-extrabold">{register?'Tạo tài khoản':'Đăng nhập'}</h1><form className="space-y-4" onSubmit={async e=>{e.preventDefault();setBusy(true);setError('');const body=Object.fromEntries(new FormData(e.currentTarget));try{const r=await api.post(`/auth/${register?'register':'login'}`,body);shop.login(r.data.data.token,r.data.data.user);shop.notify(register?'Đăng ký thành công!':'Đăng nhập thành công!');navigate('/');}catch(err){setError(errorMessage(err));}finally{setBusy(false);}}}>
+    {register&&<><label className="block text-sm">Họ và tên<input name="name" required minLength={2} maxLength={100} autoComplete="name"/></label><label className="block text-sm">Số điện thoại<input name="phone" required minLength={8} maxLength={20} autoComplete="tel"/></label></>}
+    <label className="block text-sm">Email<input name="email" type="email" required autoComplete="email"/></label><label className="block text-sm">Mật khẩu<input name="password" type="password" required minLength={8} maxLength={72} autoComplete={register?'new-password':'current-password'}/></label>{register&&<label className="block text-sm">Xác nhận mật khẩu<input name="confirmPassword" type="password" required minLength={8} autoComplete="new-password"/></label>}{error&&<p role="alert" className="text-sm text-red-600">{error}</p>}<button disabled={busy} className="btn w-full">{busy?'Đang xử lý…':register?'Đăng ký':'Đăng nhập'}</button></form><p className="mt-6 text-sm text-slate-500">{register?'Đã có tài khoản?':'Chưa có tài khoản?'} <Link to={register?'/login':'/register'} className="font-semibold text-blue-600">{register?'Đăng nhập':'Đăng ký ngay'}</Link></p></div>;
+}
